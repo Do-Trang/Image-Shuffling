@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Shuffling Web App</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body class="container mt-5">
+  <h1 class="mb-4">Image Shuffling Web App</h1>
+
+  <form id="uploadForm" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="imageInput">Choose Image:</label>
+      <input type="file" class="form-control-file" id="imageInput" name="image" accept=".png, .jpg, .jpeg" required>
+    </div>
+  
+    <div class="form-group">
+      <label for="rowsInput">Rows:</label>
+      <input type="number" class="form-control" id="rowsInput" name="rows" min="1" value="6" required>
+    </div>
+  
+    <div class="form-group">
+      <label for="colsInput">Columns:</label>
+      <input type="number" class="form-control" id="colsInput" name="cols" min="1" value="6" required>
+    </div>
+  
+    <div class="form-group">
+      <label for="filenameInput">Filename:</label>
+      <input type="text" class="form-control" id="filenameInput" name="filename" required>
+    </div>
+  
+    <div class="form-group">
+      <label for="directoryInput">Directory:</label>
+      <input type="text" class="form-control" id="directoryInput" name="directory" required>
+    </div>
+  
+    <button type="button" class="btn btn-primary" onclick="shuffleImage()">Shuffle Image</button>
+  </form>
+  <div class="mt-4" id="shuffledImageContainer"></div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    function shuffleImage() {
+        const form = document.getElementById('uploadForm');
+        const formData = new FormData(form);
+      
+        fetch('/shuffle', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.blob())
+        .then(blob => {
+          const imageURL = URL.createObjectURL(blob);
+      
+          const shuffledImageContainer = document.getElementById('shuffledImageContainer');
+          shuffledImageContainer.innerHTML = `
+            <img src="${imageURL}" alt="Shuffled Image" class="img-fluid">
+            <a href="${imageURL}" download="shuffledImage.png" class="btn btn-success mt-3">Download Shuffled Image</a>
+          `;
+        })
+        .catch(error => console.error(error));
+      }
+  </script>
+</body>
+
+</html>
